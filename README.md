@@ -21,3 +21,10 @@ A median filter is the standard tool for removing isolated spikes (shot noise) f
 Edge handling is the one ambiguous decision in a median filter. This library replicates the boundary value: near the start, missing left-hand window positions are treated as `values[0]`; near the end, missing right-hand positions are treated as `values[length - 1]`. The output length always equals the input length. When `radius` is greater than or equal to `values.length - 1`, every output position is the median of the entire signal.
 
 Because the window is always `2 * radius + 1` samples wide, it is always odd-length, so the median is always a single element of the input — the even-count (mean-of-two-middles) branch only matters for the whole-signal case, where `values.length` is even, in which case the output is the arithmetic mean of the two middle values (which may be a `.5` value).
+
+## Performance
+
+The window keeps a bounded buffer, so `push` is constant time and memory does not
+grow with the length of the stream. `peak` and `trough` are linear in the window
+size, which is the trade that keeps `push` cheap.
+
